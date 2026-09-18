@@ -1,0 +1,791 @@
+<meta charset="utf-8">
+<!-- Qui té què? — joc de conjunts de lògica per a infants (graella de doble entrada) -->
+<title>Qui té què?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFF8EC;
+    --surface: #FFFFFF;
+    --surface-2: #FFF1DC;
+    --ink: #2B2140;
+    --ink-soft: #6B6180;
+    --coral: #FF6B4A;
+    --coral-ink: #FFFFFF;
+    --teal: #1FA79A;
+    --sun: #FFC43D;
+    --good: #2E9E5B;
+    --good-bg: #E3F6EA;
+    --bad: #E0405A;
+    --bad-bg: #FDE6E9;
+    --line: #EADFC8;
+    --shadow: 0 6px 0 rgba(43,33,64,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #1C1730; --surface: #26203F; --surface-2: #2F2850;
+      --ink: #F3EFFF; --ink-soft: #B6ADD1;
+      --coral: #FF8264; --coral-ink: #201530; --teal: #4FD3C4; --sun: #FFD166;
+      --good: #58D08A; --good-bg: #1E3B2C; --bad: #FF7A8E; --bad-bg: #40222C;
+      --line: #3A3260; --shadow: 0 6px 0 rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #1C1730; --surface: #26203F; --surface-2: #2F2850;
+    --ink: #F3EFFF; --ink-soft: #B6ADD1;
+    --coral: #FF8264; --coral-ink: #201530; --teal: #4FD3C4; --sun: #FFD166;
+    --good: #58D08A; --good-bg: #1E3B2C; --bad: #FF7A8E; --bad-bg: #40222C;
+    --line: #3A3260; --shadow: 0 6px 0 rgba(0,0,0,0.35);
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Nunito', system-ui, sans-serif;
+    padding-inline: 16px;
+    padding-block: 24px;
+    display: flex;
+    justify-content: center;
+  }
+  .page{ width: 100%; max-width: 660px; display: flex; flex-direction: column; gap: 18px; }
+  h1{
+    font-family: 'Baloo 2', sans-serif; font-weight: 800;
+    font-size: clamp(28px, 7vw, 38px); margin: 0; text-wrap: balance;
+  }
+  .eyebrow{
+    font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin: 0 0 4px;
+  }
+  .intro{
+    background: var(--surface); border: 2px solid var(--line); border-radius: 20px;
+    padding: 16px 18px; font-size: 15px; line-height: 1.5; color: var(--ink-soft);
+  }
+  .intro strong{ color: var(--ink); }
+
+  .pool{
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+    background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: 16px;
+  }
+  .poolcard{ display: flex; flex-direction: column; align-items: center; gap: 6px; width: 92px; }
+  .badge{
+    position: relative; width: 84px; height: 96px;
+  }
+  .badge svg{ width: 84px; height: 96px; display: block; }
+  .badge .num{
+    position: absolute; top: -6px; left: -6px;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px;
+    color: #fff; border: 3px solid var(--surface);
+  }
+  .poolcard .name{ font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 13px; color: var(--ink-soft); }
+
+  .board{
+    background: var(--surface); border: 2px solid var(--line); border-radius: 24px;
+    padding: 16px; box-shadow: var(--shadow); overflow-x: auto;
+  }
+  .grid{ display: grid; grid-template-columns: 78px repeat(3, 1fr); gap: 8px; min-width: 320px; }
+  @media (min-width: 480px){ .grid{ grid-template-columns: 96px repeat(3, 1fr); gap: 10px; } }
+
+  .colhead, .rowhead{
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 4px 2px; text-align: center;
+  }
+  .colhead svg{ width: 32px; height: 32px; }
+  .rowhead svg{ width: 30px; height: 30px; }
+  .colhead span, .rowhead span{
+    font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 11px; line-height: 1.15; color: var(--ink);
+  }
+
+  .cell{
+    background: var(--surface-2); border: 2px solid var(--line); border-radius: 16px;
+    min-height: 64px; display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 4px; flex-wrap: wrap;
+  }
+  @media (min-width: 480px){ .cell{ min-height: 76px; gap: 8px; } }
+
+  .chip{
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 3px solid var(--chip-color, var(--ink-soft));
+    background: transparent; color: var(--chip-color, var(--ink-soft));
+    font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; transition: transform 0.08s ease, background 0.12s ease;
+  }
+  .chip:hover{ transform: scale(1.08); }
+  .chip:active{ transform: scale(0.96); }
+  .chip:focus-visible{ outline: 3px solid var(--teal); outline-offset: 2px; }
+  .chip.placed{ background: var(--chip-color, var(--ink-soft)); color: #fff; }
+  .chip[disabled]{ cursor: default; }
+
+  .chip.ok{ box-shadow: 0 0 0 3px var(--good); }
+  .chip.bad{ box-shadow: 0 0 0 3px var(--bad); }
+  .chip.bad.missing{ border-style: dashed; }
+
+  .controls{ display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button.btn{
+    font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 15px;
+    border-radius: 999px; border: none; padding: 12px 22px; cursor: pointer;
+    box-shadow: var(--shadow); transition: transform 0.08s ease;
+  }
+  button.btn:active{ transform: translateY(3px); box-shadow: none; }
+  .btn-primary{ background: var(--coral); color: var(--coral-ink); }
+  .btn-secondary{ background: var(--surface-2); color: var(--ink); border: 2px solid var(--line); box-shadow: none; padding: 10px 20px; }
+  .btn-secondary:active{ transform: translateY(1px); }
+
+  .feedback{
+    display: none; align-items: center; gap: 12px; background: var(--surface-2);
+    border: 2px solid var(--line); border-radius: 18px; padding: 14px 16px; font-family: 'Baloo 2', sans-serif;
+  }
+  .feedback.show{ display: flex; }
+  .feedback .score{ font-size: 24px; font-weight: 800; color: var(--teal); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .feedback .msg{ font-size: 15px; color: var(--ink); font-weight: 700; }
+
+  .legend{ display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); font-weight: 700; }
+  .legend span{ display: inline-flex; align-items: center; gap: 6px; }
+  .ldot{ width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 3px solid var(--ink-soft); }
+  .ldot.filled{ background: var(--ink-soft); }
+  .ldot.good{ border-color: var(--good); }
+  .ldot.bad{ border-color: var(--bad); border-style: dashed; }
+
+  #levelScreen{ display: flex; flex-direction: column; gap: 10px; }
+  .levelGrid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .levelCard{
+    background: var(--surface); border: 2px solid var(--line); border-radius: 20px;
+    padding: 16px; text-align: left; cursor: pointer; display: flex; flex-direction: column;
+    gap: 6px; box-shadow: var(--shadow); transition: transform 0.08s ease;
+  }
+  .levelCard:active{ transform: translateY(3px); box-shadow: none; }
+  .levelCard .lvlTop{ display: flex; align-items: center; justify-content: space-between; }
+  .levelCard .lvlEmoji{ font-size: 26px; }
+  .levelCard .lvlNum{
+    font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; color: #fff;
+    border-radius: 999px; padding: 2px 9px;
+  }
+  .levelCard .lvlName{ font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: var(--ink); }
+  .levelCard .lvlTag{ font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .levelCard .lvlDesc{ font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+
+  .levelBar{ display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .levelBadge{
+    display: inline-flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif;
+    font-weight: 700; font-size: 14px; background: var(--surface-2); border: 2px solid var(--line);
+    border-radius: 999px; padding: 6px 14px 6px 8px;
+  }
+  .levelBadge .lvlDot{ width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .linkBtn{
+    background: none; border: none; color: var(--teal); font-family: 'Baloo 2', sans-serif;
+    font-weight: 700; font-size: 13.5px; cursor: pointer; padding: 4px; text-decoration: underline;
+  }
+  [hidden]{ display: none !important; }
+
+  .footer{
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    margin-top: 4px; font-size: 11px; color: var(--ink-soft); opacity: 0.55;
+  }
+  .footer a{ color: inherit; text-decoration: underline; font-size: 11px; }
+  .footer .sep{ opacity: 0.7; }
+  .footer:hover{ opacity: 0.85; }
+
+  .countcell{
+    background: var(--surface-2); border: 2px solid var(--line); border-radius: 16px;
+    min-height: 64px; width: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px; cursor: pointer;
+    padding: 8px 4px; font-family: 'Baloo 2', sans-serif;
+  }
+  @media (min-width: 480px){ .countcell{ min-height: 76px; } }
+  .countcell .tallyRow{ display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; min-height: 20px; align-items: center; }
+  .countcell .tally-x{ font-size: 19px; font-weight: 800; line-height: 1; color: var(--coral); }
+  .countcell .placeholder{ font-size: 18px; color: var(--ink-soft); opacity: 0.5; }
+  .countcell .hint{ font-size: 10px; color: var(--ink-soft); font-weight: 700; }
+  .countcell[disabled]{ cursor: default; }
+  .countcell.ok{ border-color: var(--good); background: var(--good-bg); }
+  .countcell.ok .tally-x{ color: var(--good); }
+  .countcell.bad{ border-color: var(--bad); background: var(--bad-bg); }
+  .countcell.bad .tally-x{ color: var(--bad); }
+</style>
+
+<div class="page">
+  <div>
+    <p class="eyebrow">Conjunts de lògica</p>
+    <h1>Qui té què?</h1>
+  </div>
+
+  <div id="levelScreen">
+    <div class="intro">
+      Tria un nivell per començar. Com més amunt, més ajuda tens; com més amunt el número,
+      més has de pensar i comptar tu sol!
+    </div>
+    <div class="levelGrid" id="levelGrid"></div>
+  </div>
+
+  <div id="gameScreen" hidden>
+    <div class="page" style="gap: 18px; padding: 0;">
+      <div class="levelBar">
+        <span class="levelBadge" id="levelBadge"></span>
+        <button type="button" class="linkBtn" id="backBtn">← Tots els nivells</button>
+      </div>
+
+      <div class="intro" id="introText"></div>
+
+      <div class="pool" id="pool"></div>
+
+      <div class="board">
+        <div class="grid" id="grid" role="grid" aria-label="Taula de doble entrada"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="checkBtn">Comprova ✓</button>
+        <button class="btn btn-secondary" id="clearBtn">Neteja</button>
+        <button class="btn btn-secondary" id="retryBtn" hidden>Torna-ho a provar ↺</button>
+        <button class="btn btn-secondary" id="newBtn" hidden>Nova partida 🔄</button>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <div class="score" id="scoreText">0/27</div>
+        <div class="msg" id="msgText"></div>
+      </div>
+
+      <div class="legend">
+        <span><i class="ldot filled"></i> Marcat</span>
+        <span><i class="ldot good"></i> Encert</span>
+        <span><i class="ldot bad"></i> Error / oblidat</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Aplicatiu desenvolupat per amanyosa.cat</span>
+    <span class="sep">·</span>
+    <a href="mailto:amanyosa@gmail.com">Contacte</a>
+    <span class="sep">·</span>
+    <a href="https://buy.stripe.com/test_4gM9AV5St8uYgPLdRL9Zm00" target="_blank" rel="noopener">♡ Convida'ns a un cafè</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FACE_COLORS = ["#E8734F", "#1FA79A", "#8A6FD6", "#D6A62B", "#3E8EDE"];
+  var FACE_NAMES  = ["Un", "Dos", "Tres", "Quatre", "Cinc"];
+  var HEAD_COLORS = ["#FFB27A", "#8FD3C7", "#C9BCF2", "#F2D479", "#A9C9F5"];
+  var HAIR_COLOR  = "#6B4A3A";
+  var INK = "#2B2140";
+
+  var ROW_TRAITS = [
+    { id: "ulleres",     label: "Porta ulleres",  icon: iconGlasses },
+    { id: "barret",      label: "Porta barret",   icon: iconHat },
+    { id: "ullsTancats", label: "Ulls tancats",   icon: iconClosedEyes }
+  ];
+  var COL_TRAITS = [
+    { id: "somriu",          label: "Somriu",        icon: iconSmile },
+    { id: "cabellArrissat",  label: "Cabell arrissat", icon: iconCurly },
+    { id: "orellesGrans",    label: "Orelles grans", icon: iconBigEars }
+  ];
+  var ALL_TRAITS = ROW_TRAITS.concat(COL_TRAITS);
+
+  var LEVELS = [
+    { id: 1, name: "Aprenent", tagline: "Fitxes amb ajuda", emoji: "🌱", accent: "#8FD3C7",
+      mode: "chips", instantFeedback: true, retryAfterCheck: true, faceCount: 2,
+      desc: "Toca cada personatge i veuràs a l'instant si l'encertes. Pots repetir tantes vegades com vulguis." },
+    { id: 2, name: "Practicant", tagline: "Fitxes, comprova al final", emoji: "🔎", accent: "#1FA79A",
+      mode: "chips", instantFeedback: false, retryAfterCheck: true, faceCount: 3,
+      desc: "Marca tots els personatges i comprova-ho quan hagis acabat. Pots tornar-ho a provar." },
+    { id: 3, name: "Detectiu", tagline: "Recompte amb pistes", emoji: "🕵️", accent: "#E8734F",
+      mode: "count", instantFeedback: true, retryAfterCheck: false, faceCount: 4,
+      desc: "Compta tu mateix quants personatges hi ha a cada casella. Ho sabràs a l'instant, però sense repeticions." },
+    { id: 4, name: "Expert", tagline: "Recompte a cegues", emoji: "🏆", accent: "#8A6FD6",
+      mode: "count", instantFeedback: false, retryAfterCheck: false, faceCount: 5,
+      desc: "Compta amb calma i comprova-ho tot al final, d'una sola vegada. El repte definitiu!" }
+  ];
+
+  function rand(){ return Math.random(); }
+
+  function signature(f){ return ALL_TRAITS.map(function(t){ return f[t.id] ? "1" : "0"; }).join(""); }
+
+  function generateFaces(n){
+    var faces, tries = 0;
+    do {
+      faces = [];
+      for (var i = 0; i < n; i++){
+        var f = { color: HEAD_COLORS[i % HEAD_COLORS.length], accent: FACE_COLORS[i % FACE_COLORS.length], name: FACE_NAMES[i % FACE_NAMES.length] };
+        ALL_TRAITS.forEach(function(t){ f[t.id] = rand() < 0.55; });
+        faces.push(f);
+      }
+      tries++;
+    } while (hasDup(faces) && tries < 30);
+    return faces;
+  }
+
+  function hasDup(faces){
+    var seen = {};
+    for (var i = 0; i < faces.length; i++){
+      var s = signature(faces[i]);
+      if (seen[s]) return true;
+      seen[s] = true;
+    }
+    return false;
+  }
+
+  // ---------- SVG builders ----------
+
+  function svgWrap(inner, vb){ return '<svg viewBox="' + vb + '" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>'; }
+
+  function drawFace(f){
+    var p = [];
+    var earR = f.orellesGrans ? 13 : 9;
+
+    // head
+    p.push('<circle cx="60" cy="86" r="46" fill="' + f.color + '" stroke="' + INK + '" stroke-width="4"/>');
+
+    // ears
+    p.push(
+      '<circle cx="15" cy="86" r="' + earR + '" fill="' + f.color + '" stroke="' + INK + '" stroke-width="3.5"/>' +
+      '<circle cx="105" cy="86" r="' + earR + '" fill="' + f.color + '" stroke="' + INK + '" stroke-width="3.5"/>'
+    );
+
+    // curly hair
+    if (f.cabellArrissat){
+      var hx = [26, 42, 60, 78, 94], hair = "";
+      hx.forEach(function(x, idx){
+        var y = 44 + (idx % 2 === 0 ? 2 : -4);
+        hair += '<circle cx="' + x + '" cy="' + y + '" r="9" fill="' + HAIR_COLOR + '" stroke="' + INK + '" stroke-width="2.5"/>';
+      });
+      p.push(hair);
+    }
+
+    // eyes
+    if (f.ullsTancats){
+      p.push(
+        '<path d="M35 80 Q45 90 55 80" fill="none" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' +
+        '<path d="M65 80 Q75 90 85 80" fill="none" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>'
+      );
+    } else {
+      p.push(
+        '<circle cx="45" cy="82" r="8.5" fill="#fff" stroke="' + INK + '" stroke-width="3"/>' +
+        '<circle cx="75" cy="82" r="8.5" fill="#fff" stroke="' + INK + '" stroke-width="3"/>' +
+        '<circle cx="46" cy="83" r="4" fill="' + INK + '"/>' +
+        '<circle cx="76" cy="83" r="4" fill="' + INK + '"/>'
+      );
+    }
+
+    // mouth
+    if (f.somriu){
+      p.push('<path d="M44 106 Q60 122 76 106" fill="none" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>');
+    } else {
+      p.push('<path d="M46 110 Q60 106 74 110" fill="none" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>');
+    }
+
+    // glasses
+    if (f.ulleres){
+      p.push(
+        '<circle cx="45" cy="82" r="15" fill="rgba(255,255,255,0.15)" stroke="' + INK + '" stroke-width="4"/>' +
+        '<circle cx="75" cy="82" r="15" fill="rgba(255,255,255,0.15)" stroke="' + INK + '" stroke-width="4"/>' +
+        '<line x1="60" y1="80" x2="60" y2="84" stroke="' + INK + '" stroke-width="4"/>' +
+        '<line x1="28" y1="78" x2="16" y2="82" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' +
+        '<line x1="92" y1="78" x2="104" y2="82" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>'
+      );
+    }
+
+    // hat (drawn last, on top)
+    if (f.barret){
+      p.push(
+        '<path d="M28 48 L60 10 L92 48 Z" fill="' + f.accent + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+        '<rect x="24" y="44" width="72" height="10" rx="5" fill="' + f.accent + '" stroke="' + INK + '" stroke-width="3"/>' +
+        '<circle cx="60" cy="10" r="6" fill="var(--sun,#FFC43D)" stroke="' + INK + '" stroke-width="3"/>'
+      );
+    }
+
+    return svgWrap(p.join(""), "0 0 120 140");
+  }
+
+  function iconGlasses(){
+    return svgWrap(
+      '<circle cx="17" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="47" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<line x1="30" y1="22" x2="34" y2="22" stroke="currentColor" stroke-width="4"/>' +
+      '<line x1="4" y1="20" x2="0" y2="16" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>' +
+      '<line x1="60" y1="20" x2="64" y2="16" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+      "0 0 64 48"
+    );
+  }
+  function iconHat(){
+    return svgWrap(
+      '<path d="M8 44 L32 6 L56 44 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>' +
+      '<rect x="4" y="40" width="56" height="8" rx="4" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="32" cy="6" r="5" fill="currentColor"/>',
+      "0 0 64 52"
+    );
+  }
+  function iconClosedEyes(){
+    return svgWrap(
+      '<path d="M6 26 Q18 38 30 26" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>' +
+      '<path d="M34 26 Q46 38 58 26" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>',
+      "0 0 64 40"
+    );
+  }
+  function iconSmile(){
+    return svgWrap(
+      '<path d="M6 12 Q32 40 58 12" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>' +
+      '<circle cx="10" cy="10" r="3" fill="currentColor" opacity="0.5"/>' +
+      '<circle cx="54" cy="10" r="3" fill="currentColor" opacity="0.5"/>',
+      "0 0 64 44"
+    );
+  }
+  function iconCurly(){
+    return svgWrap(
+      '<circle cx="10" cy="22" r="8" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="26" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="42" cy="22" r="8" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="56" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="4"/>',
+      "0 0 64 36"
+    );
+  }
+  function iconBigEars(){
+    return svgWrap(
+      '<circle cx="12" cy="22" r="12" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="52" cy="22" r="12" fill="none" stroke="currentColor" stroke-width="4"/>' +
+      '<circle cx="32" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3.5" opacity="0.55"/>',
+      "0 0 64 44"
+    );
+  }
+  function checkGlyph(color){
+    return '<svg viewBox="0 0 20 16" style="position:absolute;width:14px;height:14px;bottom:-4px;right:-4px;background:' + color + ';border-radius:50%;padding:2px"><path d="M2 8 L7 13 L18 2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function crossGlyph(color){
+    return '<svg viewBox="0 0 20 20" style="position:absolute;width:14px;height:14px;bottom:-4px;right:-4px;background:' + color + ';border-radius:50%;padding:2px"><path d="M3 3 L17 17 M17 3 L3 17" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>';
+  }
+
+  // ---------- Game state ----------
+  // chips.marks[r][c][faceIndex] = boolean (placed?)
+  // count.marks[r][c] = integer 0..faces.length (child's own tally)
+
+  function feedbackMsg(correct, total){
+    var ratio = correct / total;
+    if (ratio === 1) return "Perfecte! Ets un detectiu expert! 🕵️‍♀️";
+    if (ratio >= 0.75) return "Molt bé! Gairebé ho tens tot! 🌟";
+    if (ratio >= 0.5) return "Bona feina, segueix observant! 🔍";
+    return "Torna-ho a provar amb calma. Tu pots! 💪";
+  }
+
+  function freshChipMarks(){
+    return ROW_TRAITS.map(function(){
+      return COL_TRAITS.map(function(){ return state.faces.map(function(){ return false; }); });
+    });
+  }
+  function freshCountMarks(){
+    return ROW_TRAITS.map(function(){ return COL_TRAITS.map(function(){ return 0; }); });
+  }
+
+  var state = { faces: [], mode: "chips", level: null, chips: null, count: null };
+
+  function renderLevelScreen(){
+    var grid = document.getElementById("levelGrid");
+    grid.innerHTML = "";
+    LEVELS.forEach(function(lvl){
+      var card = document.createElement("button");
+      card.type = "button";
+      card.className = "levelCard";
+      card.style.borderColor = lvl.accent;
+      card.innerHTML =
+        '<div class="lvlTop"><span class="lvlEmoji">' + lvl.emoji + '</span>' +
+        '<span class="lvlNum" style="background:' + lvl.accent + '">Nivell ' + lvl.id + '</span></div>' +
+        '<span class="lvlName">' + lvl.name + '</span>' +
+        '<span class="lvlTag" style="color:' + lvl.accent + '">' + lvl.tagline + '</span>' +
+        '<span class="lvlDesc">' + lvl.desc + '</span>';
+      card.addEventListener("click", function(){ selectLevel(lvl); });
+      grid.appendChild(card);
+    });
+  }
+
+  function selectLevel(lvl){
+    state.level = lvl;
+    state.mode = lvl.mode;
+    document.getElementById("levelScreen").hidden = true;
+    document.getElementById("gameScreen").hidden = false;
+    var badge = document.getElementById("levelBadge");
+    badge.innerHTML = '<span class="lvlDot" style="background:' + lvl.accent + '">' + lvl.emoji + '</span> Nivell ' + lvl.id + ' · ' + lvl.name;
+    updateIntro();
+    newRound();
+  }
+
+  function backToLevels(){
+    document.getElementById("gameScreen").hidden = true;
+    document.getElementById("levelScreen").hidden = false;
+  }
+
+  function newRound(){
+    state.faces = generateFaces(state.level.faceCount);
+    state.chips = { marks: freshChipMarks(), checked: false, result: null };
+    state.count = { marks: freshCountMarks(), checked: false, result: null };
+    renderPool();
+    renderGrid();
+    refreshControlsAndFeedback();
+  }
+
+  function activeState(){ return state.mode === "chips" ? state.chips : state.count; }
+
+  function updateIntro(){
+    var el = document.getElementById("introText");
+    if (state.mode === "chips"){
+      el.innerHTML = "Aquests són els personatges. Cada casella de la taula creua una característica de la " +
+        "<strong>fila</strong> amb una de la <strong>columna</strong>. Toca els personatges que tenen " +
+        "<strong>totes dues característiques alhora</strong> — una casella pot tenir més d'un personatge, o cap!";
+    } else {
+      el.innerHTML = "Mira bé els personatges de dalt. Per a cada casella, compta tu mateix quants personatges " +
+        "compleixen <strong>alhora</strong> la característica de la fila i la de la columna, i fes-hi " +
+        "<strong>una creu per cada personatge que trobis</strong> (clica per afegir-ne, torna a clicar per repetir el cicle).";
+    }
+  }
+
+  function refreshControlsAndFeedback(){
+    var s = activeState();
+    document.getElementById("checkBtn").hidden = s.checked;
+    document.getElementById("clearBtn").hidden = s.checked;
+    document.getElementById("retryBtn").hidden = !(s.checked && state.level && state.level.retryAfterCheck);
+    document.getElementById("newBtn").hidden = !s.checked;
+
+    var fb = document.getElementById("feedback");
+    if (s.checked && s.result){
+      document.getElementById("scoreText").textContent = s.result.correct + "/" + s.result.total;
+      document.getElementById("msgText").textContent = s.result.msg;
+      fb.classList.add("show");
+    } else {
+      fb.classList.remove("show");
+    }
+  }
+
+  function clearMarks(){
+    var s = activeState();
+    if (s.checked) return;
+    if (state.mode === "chips") state.chips.marks = freshChipMarks();
+    else state.count.marks = freshCountMarks();
+    renderGrid();
+  }
+
+  function retrySameRound(){
+    if (state.mode === "chips"){
+      state.chips = { marks: freshChipMarks(), checked: false, result: null };
+    } else {
+      state.count = { marks: freshCountMarks(), checked: false, result: null };
+    }
+    renderGrid();
+    refreshControlsAndFeedback();
+  }
+
+  function toggleChip(r, c, fi){
+    if (state.chips.checked) return;
+    state.chips.marks[r][c][fi] = !state.chips.marks[r][c][fi];
+    renderChip(r, c, fi);
+  }
+
+  function cycleCount(r, c){
+    if (state.count.checked) return;
+    var max = state.faces.length;
+    state.count.marks[r][c] = (state.count.marks[r][c] + 1) % (max + 1);
+    renderCountCell(r, c);
+  }
+
+  function chipId(r, c, fi){ return "chip-" + r + "-" + c + "-" + fi; }
+  function countId(r, c){ return "count-" + r + "-" + c; }
+
+  function renderPool(){
+    var pool = document.getElementById("pool");
+    pool.innerHTML = "";
+    state.faces.forEach(function(f, i){
+      var card = document.createElement("div");
+      card.className = "poolcard";
+      card.innerHTML =
+        '<div class="badge">' + drawFace(f) +
+        '<span class="num" style="background:' + f.accent + '">' + (i + 1) + '</span></div>' +
+        '<span class="name">Personatge ' + f.name + '</span>';
+      pool.appendChild(card);
+    });
+  }
+
+  function buildHeaders(grid){
+    var corner = document.createElement("div");
+    grid.appendChild(corner);
+    COL_TRAITS.forEach(function(t){
+      var h = document.createElement("div");
+      h.className = "colhead";
+      h.innerHTML = t.icon() + "<span>" + t.label + "</span>";
+      grid.appendChild(h);
+    });
+  }
+
+  function renderGrid(){
+    var grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    buildHeaders(grid);
+
+    ROW_TRAITS.forEach(function(rt, r){
+      var rh = document.createElement("div");
+      rh.className = "rowhead";
+      rh.innerHTML = rt.icon() + "<span>" + rt.label + "</span>";
+      grid.appendChild(rh);
+
+      COL_TRAITS.forEach(function(ct, c){
+        if (state.mode === "chips"){
+          var cell = document.createElement("div");
+          cell.className = "cell";
+          state.faces.forEach(function(f, fi){
+            var chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = "chip";
+            chip.id = chipId(r, c, fi);
+            chip.style.setProperty("--chip-color", f.accent);
+            chip.textContent = String(fi + 1);
+            chip.setAttribute("aria-label", "Personatge " + f.name + ", " + rt.label + " i " + ct.label);
+            chip.addEventListener("click", (function(rr, cc, ff){ return function(){ toggleChip(rr, cc, ff); }; })(r, c, fi));
+            cell.appendChild(chip);
+          });
+          grid.appendChild(cell);
+          state.faces.forEach(function(f, fi){ renderChip(r, c, fi); });
+        } else {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "countcell";
+          btn.id = countId(r, c);
+          btn.setAttribute("aria-label", rt.label + " i " + ct.label + ", clica per comptar");
+          btn.addEventListener("click", (function(rr, cc){ return function(){ cycleCount(rr, cc); }; })(r, c));
+          grid.appendChild(btn);
+          renderCountCell(r, c);
+        }
+      });
+    });
+  }
+
+  function renderChip(r, c, fi){
+    var chip = document.getElementById(chipId(r, c, fi));
+    if (!chip) return;
+    var placed = state.chips.marks[r][c][fi];
+    chip.classList.remove("placed", "ok", "bad", "missing");
+    chip.disabled = state.chips.checked;
+    var extra = chip.querySelector("svg");
+    if (extra) extra.remove();
+
+    var checked = state.chips.checked;
+    var instant = state.level && state.level.instantFeedback;
+
+    // Instant-feedback levels only reveal a chip once the child has actually
+    // placed it — an untouched chip never hints at the answer on its own.
+    if (!checked && !(instant && placed)){
+      if (placed) chip.classList.add("placed");
+      return;
+    }
+
+    var f = state.faces[fi];
+    var actual = !!(f[ROW_TRAITS[r].id] && f[COL_TRAITS[c].id]);
+
+    if (placed) chip.classList.add("placed");
+    if (placed === actual){
+      chip.classList.add("ok");
+      if (placed) chip.insertAdjacentHTML("beforeend", checkGlyph("var(--good)"));
+    } else {
+      chip.classList.add("bad");
+      if (placed){
+        chip.insertAdjacentHTML("beforeend", crossGlyph("var(--bad)"));
+      } else if (checked){
+        chip.classList.add("missing");
+      }
+    }
+  }
+
+  function actualCount(r, c){
+    var rt = ROW_TRAITS[r].id, ct = COL_TRAITS[c].id;
+    return state.faces.reduce(function(n, f){ return n + (f[rt] && f[ct] ? 1 : 0); }, 0);
+  }
+
+  function renderCountCell(r, c){
+    var btn = document.getElementById(countId(r, c));
+    if (!btn) return;
+    var n = state.count.marks[r][c];
+    btn.classList.remove("ok", "bad");
+    btn.disabled = state.count.checked;
+
+    var tally = n > 0
+      ? Array(n).fill('<span class="tally-x">✕</span>').join("")
+      : '<span class="placeholder">–</span>';
+    var hint = "";
+
+    var checked = state.count.checked;
+    var instant = state.level && state.level.instantFeedback;
+
+    // Instant-feedback levels only reveal a cell once the child has entered
+    // a count for it — a cell left at 0 never hints that it should be higher.
+    if (checked || (instant && n > 0)){
+      var actual = actualCount(r, c);
+      if (n === actual){
+        btn.classList.add("ok");
+      } else {
+        btn.classList.add("bad");
+        hint = '<span class="hint">Correcte: ' + actual + '</span>';
+      }
+    }
+
+    btn.innerHTML = '<span class="tallyRow">' + tally + '</span>' + hint;
+  }
+
+  function checkChips(){
+    if (state.chips.checked) return;
+    state.chips.checked = true;
+
+    var correct = 0, total = 0;
+    ROW_TRAITS.forEach(function(rt, r){
+      COL_TRAITS.forEach(function(ct, c){
+        state.faces.forEach(function(f, fi){
+          total++;
+          var placed = state.chips.marks[r][c][fi];
+          var actual = !!(f[rt.id] && f[ct.id]);
+          if (placed === actual) correct++;
+          renderChip(r, c, fi);
+        });
+      });
+    });
+
+    state.chips.result = { correct: correct, total: total, msg: feedbackMsg(correct, total) };
+    refreshControlsAndFeedback();
+  }
+
+  function checkCount(){
+    if (state.count.checked) return;
+    state.count.checked = true;
+
+    var correct = 0, total = 0;
+    ROW_TRAITS.forEach(function(rt, r){
+      COL_TRAITS.forEach(function(ct, c){
+        total++;
+        if (state.count.marks[r][c] === actualCount(r, c)) correct++;
+        renderCountCell(r, c);
+      });
+    });
+
+    state.count.result = { correct: correct, total: total, msg: feedbackMsg(correct, total) };
+    refreshControlsAndFeedback();
+  }
+
+  function checkAnswers(){
+    if (state.mode === "chips") checkChips();
+    else checkCount();
+  }
+
+  document.getElementById("checkBtn").addEventListener("click", checkAnswers);
+  document.getElementById("clearBtn").addEventListener("click", clearMarks);
+  document.getElementById("retryBtn").addEventListener("click", retrySameRound);
+  document.getElementById("newBtn").addEventListener("click", newRound);
+  document.getElementById("backBtn").addEventListener("click", backToLevels);
+
+  function start(){ renderLevelScreen(); }
+
+  if (window.claude && window.claude.hot){
+    window.claude.hot.snapshot(function(){ return {}; });
+    window.claude.hot.ready ? window.claude.hot.ready(start) : start();
+  } else {
+    start();
+  }
+})();
+</script>
