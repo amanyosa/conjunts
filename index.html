@@ -50,6 +50,14 @@
     justify-content: center;
   }
   .page{ width: 100%; max-width: 660px; display: flex; flex-direction: column; gap: 18px; }
+  .topbar{ display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .donateTop{
+    flex: 0 0 auto; font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 13px;
+    background: var(--surface); color: var(--ink); border: 2px solid var(--line);
+    border-radius: 999px; padding: 8px 16px; text-decoration: none; white-space: nowrap;
+    box-shadow: var(--shadow); transition: transform 0.08s ease;
+  }
+  .donateTop:active{ transform: translateY(2px); box-shadow: none; }
   h1{
     font-family: 'Baloo 2', sans-serif; font-weight: 800;
     font-size: clamp(28px, 7vw, 38px); margin: 0; text-wrap: balance;
@@ -208,9 +216,12 @@
 </style>
 
 <div class="page">
-  <div>
-    <p class="eyebrow">Conjunts de lògica</p>
-    <h1>Qui té què?</h1>
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">Conjunts de lògica</p>
+      <h1>Qui té què?</h1>
+    </div>
+    <a class="donateTop" href="https://buy.stripe.com/test_4gM9AV5St8uYgPLdRL9Zm00" target="_blank" rel="noopener">♡ Convida'ns a un cafè</a>
   </div>
 
   <div id="levelScreen">
