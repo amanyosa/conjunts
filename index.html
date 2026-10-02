@@ -270,7 +270,7 @@
   <div class="footer">
     <span>Aplicatiu desenvolupat per amanyosa.cat</span>
     <span class="sep">·</span>
-    <a href="mailto:amanyosa@gmail.com">Contacte</a>
+    <a href="#" data-mail>Contacte</a>
     <span class="sep">·</span>
     <a href="https://buy.stripe.com/14AfZj0wWeYH3jzeSwa7C00" target="_blank" rel="noopener">♡ Convida'ns a un cafè</a>
   </div>
@@ -798,5 +798,14 @@
   } else {
     start();
   }
+})();
+</script>
+<script>
+// Correu ofuscat: es munta en temps d'execució, no apareix sencer a l'HTML
+(function () {
+  var MAIL_USER = "amanyosa", MAIL_DOMAIN = "gmail.com";
+  document.querySelectorAll("a[data-mail]").forEach(function (a) {
+    a.href = "mailto:" + MAIL_USER + "@" + MAIL_DOMAIN;
+  });
 })();
 </script>
