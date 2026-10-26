@@ -273,6 +273,12 @@
     <a href="#" data-mail>Contacte</a>
     <span class="sep">·</span>
     <a href="https://buy.stripe.com/14AfZj0wWeYH3jzeSwa7C00" target="_blank" rel="noopener">♡ Convida'ns a un cafè</a>
+    <span class="sep">·</span>
+    <a href="https://amanyosa.cat/avis-legal/" target="_blank" rel="noopener">Avís legal</a>
+    <span class="sep">·</span>
+    <a href="https://amanyosa.cat/privacitat/" target="_blank" rel="noopener">Privacitat</a>
+    <span class="sep">·</span>
+    <a href="https://amanyosa.cat/cookies/" target="_blank" rel="noopener">Cookies</a>
   </div>
 </div>
 
@@ -803,7 +809,7 @@
 <script>
 // Correu ofuscat: es munta en temps d'execució, no apareix sencer a l'HTML
 (function () {
-  var MAIL_USER = "amanyosa", MAIL_DOMAIN = "gmail.com";
+  var MAIL_USER = "contacte", MAIL_DOMAIN = "amanyosa.cat";
   document.querySelectorAll("a[data-mail]").forEach(function (a) {
     a.href = "mailto:" + MAIL_USER + "@" + MAIL_DOMAIN;
   });
