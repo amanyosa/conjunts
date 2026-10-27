@@ -12,7 +12,7 @@
     --ink-soft: #6B6180;
     --coral: #FF6B4A;
     --coral-ink: #FFFFFF;
-    --teal: #1FA79A;
+    --teal: #177e74;
     --sun: #FFC43D;
     --good: #2E9E5B;
     --good-bg: #E3F6EA;
@@ -285,9 +285,9 @@
 (function(){
   "use strict";
 
-  var FACE_COLORS = ["#E8734F", "#1FA79A", "#8A6FD6", "#D6A62B", "#3E8EDE"];
+  var FACE_COLORS = ["#cf461b", "#177e74", "#7f61d2", "#D6A62B", "#3E8EDE"];
   var FACE_NAMES  = ["Un", "Dos", "Tres", "Quatre", "Cinc"];
-  var HEAD_COLORS = ["#FFB27A", "#8FD3C7", "#C9BCF2", "#F2D479", "#A9C9F5"];
+  var HEAD_COLORS = ["#FFB27A", "#328072", "#C9BCF2", "#F2D479", "#A9C9F5"];
   var HAIR_COLOR  = "#6B4A3A";
   var INK = "#2B2140";
 
@@ -304,16 +304,16 @@
   var ALL_TRAITS = ROW_TRAITS.concat(COL_TRAITS);
 
   var LEVELS = [
-    { id: 1, name: "Aprenent", tagline: "Fitxes amb ajuda", emoji: "🌱", accent: "#8FD3C7",
+    { id: 1, name: "Aprenent", tagline: "Fitxes amb ajuda", emoji: "🌱", accent: "#328072",
       mode: "chips", instantFeedback: true, retryAfterCheck: true, faceCount: 2,
       desc: "Toca cada personatge i veuràs a l'instant si l'encertes. Pots repetir tantes vegades com vulguis." },
-    { id: 2, name: "Practicant", tagline: "Fitxes, comprova al final", emoji: "🔎", accent: "#1FA79A",
+    { id: 2, name: "Practicant", tagline: "Fitxes, comprova al final", emoji: "🔎", accent: "#177e74",
       mode: "chips", instantFeedback: false, retryAfterCheck: true, faceCount: 3,
       desc: "Marca tots els personatges i comprova-ho quan hagis acabat. Pots tornar-ho a provar." },
-    { id: 3, name: "Detectiu", tagline: "Recompte amb pistes", emoji: "🕵️", accent: "#E8734F",
+    { id: 3, name: "Detectiu", tagline: "Recompte amb pistes", emoji: "🕵️", accent: "#cf461b",
       mode: "count", instantFeedback: true, retryAfterCheck: false, faceCount: 4,
       desc: "Compta tu mateix quants personatges hi ha a cada casella. Ho sabràs a l'instant, però sense repeticions." },
-    { id: 4, name: "Expert", tagline: "Recompte a cegues", emoji: "🏆", accent: "#8A6FD6",
+    { id: 4, name: "Expert", tagline: "Recompte a cegues", emoji: "🏆", accent: "#7f61d2",
       mode: "count", instantFeedback: false, retryAfterCheck: false, faceCount: 5,
       desc: "Compta amb calma i comprova-ho tot al final, d'una sola vegada. El repte definitiu!" }
   ];
